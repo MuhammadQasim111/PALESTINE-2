@@ -16,10 +16,36 @@ export const Booking: React.FC = () => {
   
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate API call
-    setTimeout(() => setSubmitted(true), 1000);
+    
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/mqasim111786111@gmail.com", {
+        method: "POST",
+        headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            package: PACKAGES.find(p => p.id === formData.packageId)?.title || formData.packageId,
+            month: formData.month,
+            _subject: `New Space Voyage Booking: ${formData.name}`,
+            _template: "table"
+        })
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        console.error("Submission failed");
+        alert("There was an issue submitting your booking. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("There was an error sending your request.");
+    }
   };
 
   if (submitted) {
